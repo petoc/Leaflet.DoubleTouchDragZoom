@@ -83,7 +83,7 @@
       this._doubleTouch = this._lastTouchTime && ((now - this._lastTouchTime) <= this._map.options.doubleTouchDragZoomDelay);
 
       if (this._doubleTouch) {
-        DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag');
+        DomUtil.addClass(this._map._container, 'leaflet-double-touch');
 
         this._startPoint = this._map.mouseEventToContainerPoint(e.touches[0]);
         this._startTouch = e.touches[0];
@@ -115,6 +115,7 @@
 
         if (!this._moved) {
           this._disableHandlers();
+          DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag');
         }
 
         var map = this._map;
@@ -156,6 +157,7 @@
 
       if (this._doubleTouch) {
         DomUtil.removeClass(this._map._container, 'leaflet-double-touch-drag');
+        DomUtil.removeClass(this._map._container, 'leaflet-double-touch');
         DomEvent.off(document, 'touchmove', this._onTouchMove, this);
         DomEvent.off(document, 'touchend', this._onTouchEnd, this);
 

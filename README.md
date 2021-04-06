@@ -2,6 +2,10 @@
 
 Leaflet plugin for one finger zoom.
 
+## Demo
+
+https://petoc.github.io/Leaflet.DoubleTouchDragZoom/example/
+
 ## Usage
 
 Include plugin after Leaflet script and enable it in map options.
@@ -26,16 +30,18 @@ Add CSS style to disable user-select and change cursor during zooming.
 
 ```html
 <style>
-    .leaflet-double-touch-drag {
+    .leaflet-double-touch {
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
+    }
+    .leaflet-double-touch-drag {
         cursor: move;
         cursor: -webkit-grabbing;
         cursor:    -moz-grabbing;
         cursor:       row-resize;
-        }
+    }
 </style>
 ```
 
