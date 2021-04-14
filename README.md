@@ -53,6 +53,7 @@ Plugin adds following options to map configuration.
 |--------------------------------|-------------------|---------|-------------|
 | doubleTouchDragZoom            | Boolean \| String | false   | Whether the map can be zoomed in by double touch dragging down or zoomed out by double touch dragging up with one finger. If passed `'center'`, it will zoom to the center of the view regardless of where the touch event was. Enabled for touch-capable web browsers except for old Androids. |
 | doubleTouchDragZoomDelay       | Number            | 300     | Maximum delay between touches to trigger double touch. |
+| doubleTouchDragZoomInvert      | Boolean           | false   | Invert dragging directions for zoom in/out. |
 | doubleTouchDragZoomScaleFactor | Number            | 100     | Zooming sensitivity to vertical dragging (high < 100 < low). |
 
 ## Compatibility

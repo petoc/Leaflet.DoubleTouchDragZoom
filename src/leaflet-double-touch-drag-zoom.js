@@ -33,6 +33,9 @@
     // @option doubleTouchDragZoomDelay: Number = 300
     // Maximum delay between touches to trigger double touch.
     doubleTouchDragZoomDelay: 300,
+    // @option doubleTouchDragZoomInvert: Boolean = false
+    // Invert dragging directions for zoom in/out.
+    doubleTouchDragZoomInvert: false,
     // @option doubleTouchDragZoomScaleFactor: Number = 100
     // Zooming sensitivity to vertical dragging (high < 100 < low).
     doubleTouchDragZoomScaleFactor: 100
@@ -120,8 +123,8 @@
 
         var map = this._map;
         var p = map.mouseEventToContainerPoint(e.touches[0]);
-
-        var scale = Math.exp((p.y - this._startPoint.y) / this._map.options.doubleTouchDragZoomScaleFactor);
+        var py = this._map.options.doubleTouchDragZoomInvert ? this._startPoint.y - p.y : p.y - this._startPoint.y;
+        var scale = Math.exp(py / this._map.options.doubleTouchDragZoomScaleFactor);
         this._zoom = map.getScaleZoom(scale, this._startZoom);
 
         if (!map.options.bounceAtZoomLimits && (
