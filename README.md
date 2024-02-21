@@ -8,41 +8,43 @@ https://petoc.github.io/Leaflet.DoubleTouchDragZoom/example/
 
 ## Usage
 
-Include plugin after Leaflet script and enable it in map options.
+```sh
+npm i @petoc/leaflet-double-touch-drag-zoom
+```
+
+```js
+import L from 'leaflet';
+import DoubleTouchDragZoom from '@petoc/leaflet-double-touch-drag-zoom';
+
+import 'leaflet/dist/leaflet.css';
+import '@petoc/leaflet-double-touch-drag-zoom/src/leaflet-double-touch-drag-zoom.css';
+
+L.Map.addInitHook('addHandler', 'doubleTouchDragZoom', DoubleTouchDragZoom);
+
+const map = L.map('map', {
+    center: [48.6726, 19.6994],
+    zoom: 8,
+    doubleTouchDragZoom: true
+});
+```
+
+Alternative usage
 
 ```html
+<link rel="stylesheet" href="leaflet-double-touch-drag-zoom.css" />
+...
 <script src="leaflet.js"></script>
 <script src="leaflet-double-touch-drag-zoom.js"></script>
 <script>
     var map = L.map('map', {
         center: [48.6726, 19.6994],
         zoom: 8,
-        zoomControl: true,
         doubleTouchDragZoom: true
     });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 </script>
-```
-
-Add CSS style to disable user-select and change cursor during zooming.
-
-```html
-<style>
-    .leaflet-double-touch {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    .leaflet-double-touch-drag {
-        cursor: move;
-        cursor: -webkit-grabbing;
-        cursor:    -moz-grabbing;
-        cursor:       row-resize;
-    }
-</style>
 ```
 
 ## Options

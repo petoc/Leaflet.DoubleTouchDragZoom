@@ -1,0 +1,28 @@
+{
+  "name": "@petoc/leafet-double-touch-drag-zoom",
+  "version": "1.0.0",
+  "author": "Peter C.",
+  "license": "MIT",
+  "description": "Leaflet plugin for one finger zoom.",
+  "keywords": [
+    "leaflet",
+    "plugin",
+    "zoom"
+  ],
+  "files": [
+    "src"
+  ],
+  "peerDependencies": {
+    "leaflet": "^1.0.0"
+  },
+  "main": "src/leaflet-double-touch-drag-zoom.js",
+  "types": "src/leaflet-double-touch-drag-zoom.d.ts",
+  "homepage": "https://github.com/petoc/Leaflet.DoubleTouchDragZoom#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petoc/Leaflet.DoubleTouchDragZoom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/petoc/Leaflet.DoubleTouchDragZoom/issues"
+  }
+}

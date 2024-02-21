@@ -8,20 +8,13 @@
     window.L.DoubleTouchDragZoom = factory(L);
   }
 }(function (L) {
-  var Map = L.Map;
-  var Handler = L.Handler;
-  var DomEvent = L.DomEvent;
-  var DomUtil = L.DomUtil;
-  var Util = L.Util;
-  var Point = L.Point;
-
   /*
    * L.Handler.DoubleTouchDragZoom is used by L.Map to add one finger zoom on supported browsers.
    */
 
   // @namespace L.Map
   // @section Interaction Options
-  Map.mergeOptions({
+  L.Map.mergeOptions({
     // @section Touch interaction options
     // @option doubleTouchDragZoom: Boolean|String = *
     // Whether the map can be zoomed in by double touch dragging down or
@@ -41,15 +34,21 @@
     doubleTouchDragZoomScaleFactor: 100
   });
 
-  var DoubleTouchDragZoom = Handler.extend({
+  var DoubleTouchDragZoom = L.Handler.extend({
     addHooks: function () {
-      DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag-zoom');
-      DomEvent.on(this._map._container, 'touchstart', this._onTouchStart, this);
+      this._onTouchStart = this._onTouchStart.bind(this);
+      this._onTouchMove = this._onTouchMove.bind(this);
+      this._onTouchEnd = this._onTouchEnd.bind(this);
+      L.DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag-zoom');
+      this._map._container.addEventListener('touchstart', this._onTouchStart);
+      this._map._container.addEventListener('mousedown', this._onTouchStart);
     },
 
     removeHooks: function () {
-      DomUtil.removeClass(this._map._container, 'leaflet-double-touch-drag-zoom');
-      DomEvent.off(this._map._container, 'touchstart', this._onTouchStart, this);
+      this._onTouchStart = this._onTouchStart.bind(this);
+      L.DomUtil.removeClass(this._map._container, 'leaflet-double-touch-drag-zoom');
+      this._map._container.removeEventListener('touchstart', this._onTouchStart);
+      this._map._container.removeEventListener('mousedown', this._onTouchStart);
     },
 
     _disableHandlers: function () {
@@ -79,17 +78,16 @@
     },
 
     _onTouchStart: function (e) {
-      if (!e.touches || e.touches.length !== 1 || this._map._animatingZoom || this._zooming) { return; }
-
+      if (this._map._animatingZoom || this._zooming) { return; }
       this._touch = true;
       var now = Date.now();
       this._doubleTouch = this._lastTouchTime && ((now - this._lastTouchTime) <= this._map.options.doubleTouchDragZoomDelay);
 
       if (this._doubleTouch) {
-        DomUtil.addClass(this._map._container, 'leaflet-double-touch');
+        L.DomUtil.addClass(this._map._container, 'leaflet-double-touch');
 
-        this._startPoint = this._map.mouseEventToContainerPoint(e.touches[0]);
-        this._startTouch = e.touches[0];
+        this._startPoint = this._map.mouseEventToContainerPoint(e);
+        this._startTouch = e;
         this._centerPoint = this._map.getSize()._divideBy(2);
         this._startLatLng = this._map.containerPointToLatLng(this._centerPoint);
 
@@ -104,25 +102,27 @@
 
         this._map._stop();
 
-        DomEvent.on(document, 'touchmove', this._onTouchMove, this);
-        DomEvent.on(document, 'touchend', this._onTouchEnd, this);
+        L.DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag-zoom');
+        document.addEventListener('touchmove', this._onTouchMove);
+        document.addEventListener('touchend', this._onTouchEnd);
+        document.addEventListener('mousemove', this._onTouchMove);
+        document.addEventListener('mouseup', this._onTouchEnd);
       }
 
       this._lastTouchTime = now;
     },
 
     _onTouchMove: function (e) {
-      if (!e.touches || e.touches.length !== 1 || !this._zooming) { return; }
+      if (!this._zooming) { return; }
 
       if (this._doubleTouch) {
-
         if (!this._moved) {
           this._disableHandlers();
-          DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag');
+          L.DomUtil.addClass(this._map._container, 'leaflet-double-touch-drag');
         }
 
         var map = this._map;
-        var p = map.mouseEventToContainerPoint(e.touches[0]);
+        var p = map.mouseEventToContainerPoint(e);
         var py = this._map.options.doubleTouchDragZoomInvert ? this._startPoint.y - p.y : p.y - this._startPoint.y;
         var scale = Math.exp(py / this._map.options.doubleTouchDragZoomScaleFactor);
         this._zoom = map.getScaleZoom(scale, this._startZoom);
@@ -137,7 +137,7 @@
           this._center = this._startLatLng;
           if (scale === 1) { return; }
         } else {
-          var delta = (new Point(this._startPoint.x, this._startPoint.y))._subtract(this._centerPoint);
+          var delta = (new L.Point(this._startPoint.x, this._startPoint.y))._subtract(this._centerPoint);
           if (scale === 1 && delta.x === 0 && delta.y === 0) { return; }
           this._center = map.unproject(map.project(this._doubleTouchStartLatLng, this._zoom).subtract(delta), this._zoom);
         }
@@ -147,9 +147,9 @@
           this._moved = true;
         }
 
-        Util.cancelAnimFrame(this._animRequest);
-        var moveFn = Util.bind(map._move, map, this._center, this._zoom, {pinch: true, round: false});
-        this._animRequest = Util.requestAnimFrame(moveFn, this, true);
+        L.Util.cancelAnimFrame(this._animRequest);
+        var moveFn = L.Util.bind(map._move, map, this._center, this._zoom, {pinch: true, round: false});
+        this._animRequest = L.Util.requestAnimFrame(moveFn, this, true);
       }
     },
 
@@ -159,10 +159,12 @@
       var map = this._map;
 
       if (this._doubleTouch) {
-        DomUtil.removeClass(this._map._container, 'leaflet-double-touch-drag');
-        DomUtil.removeClass(this._map._container, 'leaflet-double-touch');
-        DomEvent.off(document, 'touchmove', this._onTouchMove, this);
-        DomEvent.off(document, 'touchend', this._onTouchEnd, this);
+        L.DomUtil.removeClass(this._map._container, 'leaflet-double-touch-drag');
+        L.DomUtil.removeClass(this._map._container, 'leaflet-double-touch');
+        document.removeEventListener('touchmove', this._onTouchMove);
+        document.removeEventListener('touchend', this._onTouchEnd);
+        document.removeEventListener('mousemove', this._onTouchMove);
+        document.removeEventListener('mouseup', this._onTouchEnd);
 
         if (!this._moved || !this._zooming) {
           this._zooming = false;
@@ -172,15 +174,15 @@
         this._doubleTouch = false;
         this._moved = false;
         this._zooming = false;
-        Util.cancelAnimFrame(this._animRequest);
+        L.Util.cancelAnimFrame(this._animRequest);
 
         if (!this._center) { return; }
 
         var zoomend = function () {
           this._enableHandlers();
-          DomEvent.off(map, 'zoomend', zoomend, this);
+          L.DomEvent.off(map, 'zoomend', zoomend, this);
         };
-        DomEvent.on(map, 'zoomend', zoomend, this);
+        L.DomEvent.on(map, 'zoomend', zoomend, this);
 
         if (map.options.doubleTouchDragZoom === 'center') {
           map.setZoom(map._limitZoom(this._zoom));
@@ -196,7 +198,7 @@
   // @section Handlers
   // @property doubleTouchDragZoom: Handler
   // Double touch zoom handler.
-  Map.addInitHook('addHandler', 'doubleTouchDragZoom', DoubleTouchDragZoom);
+  L.Map.addInitHook('addHandler', 'doubleTouchDragZoom', DoubleTouchDragZoom);
 
   return DoubleTouchDragZoom;
 }, window));
