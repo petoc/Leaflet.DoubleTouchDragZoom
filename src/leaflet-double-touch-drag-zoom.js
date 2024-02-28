@@ -75,7 +75,13 @@
     },
 
     _onTouchStart: function (e) {
-      if (this._map._animatingZoom || this._zooming || (this._touchStartEvent && this._touchStartEvent !== e.type)) { return; }
+      console.log(e.touches);
+      if (this._map._animatingZoom || this._zooming
+        || (this._touchStartEvent && this._touchStartEvent !== e.type)
+        || (e.touches && e.touches.length > 1)
+      ) {
+        return;
+      }
       this._touch = true;
       this._touchStartEvent = e.type;
       var now = Date.now();
