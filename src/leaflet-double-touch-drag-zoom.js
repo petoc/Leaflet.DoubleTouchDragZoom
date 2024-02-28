@@ -36,6 +36,7 @@
 
   var DoubleTouchDragZoom = L.Handler.extend({
     addHooks: function () {
+      this._eventCache = [];
       this._onTouchStart = this._onTouchStart.bind(this);
       this._onTouchMove = this._onTouchMove.bind(this);
       this._onTouchEnd = this._onTouchEnd.bind(this);
@@ -75,10 +76,9 @@
     },
 
     _onTouchStart: function (e) {
-      console.log(e.touches);
       if (this._map._animatingZoom || this._zooming
-        || (this._touchStartEvent && this._touchStartEvent !== e.type)
-        || (e.touches && e.touches.length > 1)
+          || (this._touchStartEvent && this._touchStartEvent !== e.type)
+          || this._eventCache.length > 1
       ) {
         return;
       }
@@ -88,6 +88,11 @@
       this._doubleTouch = this._lastTouchTime && ((now - this._lastTouchTime) <= this._map.options.doubleTouchDragZoomDelay);
       this._eventNameMove = e.type.replace('start', 'move').replace('down', 'move');
       this._eventNameEnd = e.type.replace('start', 'end').replace('down', 'up');
+      this._eventCache.push(e);
+      var that = this;
+      document.addEventListener(this._eventNameEnd, function () {
+        that._eventCache.pop();
+      });
 
       if (this._doubleTouch) {
         L.DomUtil.addClass(this._map._container, 'leaflet-double-touch');
@@ -117,6 +122,11 @@
     },
 
     _onTouchMove: function (e) {
+      if (this._eventCache.length > 1) {
+        this._onTouchEnd();
+        return;
+      }
+
       if (!this._zooming) { return; }
 
       if (this._doubleTouch) {

@@ -1,6 +1,6 @@
 {
   "name": "@petoc/leaflet-double-touch-drag-zoom",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "author": "Peter C.",
   "license": "MIT",
   "description": "Leaflet plugin for one finger zoom.",
