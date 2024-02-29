@@ -4,7 +4,7 @@ Leaflet plugin for one finger zoom.
 
 ## Demo
 
-https://petoc.github.io/Leaflet.DoubleTouchDragZoom/example/
+<https://petoc.github.io/Leaflet.DoubleTouchDragZoom/example/>
 
 ## Usage
 
@@ -14,9 +14,8 @@ npm i @petoc/leaflet-double-touch-drag-zoom
 
 ```js
 import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-
 import '@petoc/leaflet-double-touch-drag-zoom';
+import 'leaflet/dist/leaflet.css';
 import '@petoc/leaflet-double-touch-drag-zoom/src/leaflet-double-touch-drag-zoom.css';
 
 const map = L.map('map', {
