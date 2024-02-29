@@ -14,12 +14,10 @@ npm i @petoc/leaflet-double-touch-drag-zoom
 
 ```js
 import L from 'leaflet';
-import DoubleTouchDragZoom from '@petoc/leaflet-double-touch-drag-zoom';
-
 import 'leaflet/dist/leaflet.css';
-import '@petoc/leaflet-double-touch-drag-zoom/src/leaflet-double-touch-drag-zoom.css';
 
-L.Map.addInitHook('addHandler', 'doubleTouchDragZoom', DoubleTouchDragZoom);
+import '@petoc/leaflet-double-touch-drag-zoom';
+import '@petoc/leaflet-double-touch-drag-zoom/src/leaflet-double-touch-drag-zoom.css';
 
 const map = L.map('map', {
     center: [48.6726, 19.6994],
